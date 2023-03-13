@@ -1,0 +1,3 @@
+[submodule "TkCanvas"]
+	path = TkCanvas
+	url = git@github.com:ventus550/TkCanvas.git
