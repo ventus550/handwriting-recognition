@@ -64,7 +64,8 @@ def pad_resize(image, size=image_size):
 			[W, W+w],
 			[H, H+h],
 			[0, 0]
-		]
+		],
+		constant_values=255
 	)
 
 @store_transformation
@@ -94,14 +95,16 @@ def normalize(image):
 	return tf.cast(image, tf.float32) / 255.0
 
 @store_transformation
+def invertnorm(image):
+	return tf.where(image > 200, tf.zeros_like(image), tf.ones_like(image)) # squash and invert
+
+@store_transformation
 def blur(image, k=3):
 	# probably quite bad
 	return cv2.blur(image, (k, k), cv2.BORDER_DEFAULT)
 
 @store_transformation
 def reshape(image):
-	# image = np.transpose(image, [1, 0, 2])
-	# return image[:, ::-1]
 	image = tf.transpose(image, perm=[1, 0, 2])
 	image = tf.image.flip_left_right(image)
 	return image
@@ -121,6 +124,6 @@ def preprocess(image: Image):
 		input,
 		pad_resize,
 		grayscale,
-		normalize,
+		invertnorm,
 		reshape,
 	)
