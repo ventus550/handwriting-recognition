@@ -9,7 +9,7 @@ class DrawingCanvas(Canvas):
 		self.register_mouse_press(self.on_click)
 		self.register_mouse_move(self.on_move)
 		self.register_mouse_release(self.on_release)
-		self.classifer = Classifier("models/hr_std.model.h5")
+		self.classifer = Classifier("models/base.h5")
 
 	def on_click(self, _):
 		self.reset()

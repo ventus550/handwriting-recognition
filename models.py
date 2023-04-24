@@ -4,6 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 import numpy as np
 from numpy import ndarray
+import utils
 
 
 max_len = 21
@@ -26,8 +27,7 @@ def decode_batch_predictions(pred):
 
 class ModelInterface:
 	def __init__(self, path):
-		self.model = tf.keras.models.load_model(path, compile=False)
-		self.model.compile()
+		self.model = utils.load(path)
 
 	@staticmethod
 	def img2tensor(image: ndarray):
