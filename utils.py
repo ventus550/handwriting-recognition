@@ -32,30 +32,31 @@ def load(path: Union[Path, str]):
 
 
 def text2img(text, font_path="./data/fonts/Quicksand.otf", width=128, height=32):
-    # Create a new image
-    image = Image.new("RGB", (width, height), color="white")
+	# Create a new image
+	font_path = str(font_path)
+	image = Image.new("RGB", (width, height), color="white")
 
-    # Get a drawing context for the image
-    draw = ImageDraw.Draw(image)
+	# Get a drawing context for the image
+	draw = ImageDraw.Draw(image)
 
-    # Set up text
-    font_size = 1
-    font = ImageFont.truetype(font_path, font_size)
+	# Set up text
+	font_size = 1
+	font = ImageFont.truetype(font_path, font_size)
 
-    # Resize font to fit text within image
-    while font.getsize(text)[0] < width and font.getsize(text)[1] < height:
-        font_size += 1
-        font = ImageFont.truetype(font_path, font_size)
+	# Resize font to fit text within image
+	while font.getsize(text)[0] < width and font.getsize(text)[1] < height:
+		font_size += 1
+		font = ImageFont.truetype(font_path, font_size)
 
-    # Decrease font size until text fits within image
-    while font.getsize(text)[0] > width or font.getsize(text)[1] > height:
-        font_size -= 1
-        font = ImageFont.truetype(font_path, font_size)
+	# Decrease font size until text fits within image
+	while (font.getsize(text)[0] > width or font.getsize(text)[1] > height) and font_size > 0:
+		font_size -= 1
+		font = ImageFont.truetype(font_path, font_size)
 
-    # Calculate text position for center alignment
-    x = (width - font.getsize(text)[0]) // 2
-    y = (height - font.getsize(text)[1]) // 2
+	# Calculate text position for center alignment
+	x = (width - font.getsize(text)[0]) // 2
+	y = (height - font.getsize(text)[1]) // 2
 
-    # Draw text onto image
-    draw.text((x, y), text, fill="black", font=font)
-    return 1 - np.mean(image, axis=2, dtype=float)
+	# Draw text onto image
+	draw.text((x, y), text, fill="black", font=font)
+	return 1 - np.mean(image, axis=2, dtype=float)
