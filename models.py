@@ -26,7 +26,7 @@ def decode_batch_predictions(pred):
     output_text = []
     for res in results:
         res = tf.gather(res, tf.where(tf.math.not_equal(res, -1)))
-        res = "".join((char2num[(x - 1)[0]] for x in res))
+        res = "".join((char2num[x[0]] for x in res))
         output_text.append(res)
     return output_text
 

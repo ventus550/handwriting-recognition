@@ -10,7 +10,7 @@ class DrawingCanvas(Canvas):
         self.register_mouse_press(self.on_click)
         self.register_mouse_move(self.on_move)
         self.register_mouse_release(self.on_release)
-        self.classifer = Classifier("models/proto.h5")
+        self.classifer = Classifier("models/hr.h5")
 
     def on_click(self, _):
         self.reset()
@@ -23,7 +23,7 @@ class DrawingCanvas(Canvas):
         self.curve(self.points)
 
     def on_release(self, _):
-        img, _ = self.capture(margin=0.1)
+        img, _ = self.capture(margin=0)
         pimg = preprocess(img)
         txt = self.classifer.classify(pimg)
         print(txt)
