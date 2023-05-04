@@ -60,7 +60,9 @@ def resize(image, size=image_size):
 
 @store_transformation
 def pad_resize(image, size=image_size):
-    return tf.image.resize_with_pad(255 - image, *size, method=tf.image.ResizeMethod.LANCZOS3)
+    return tf.image.resize_with_pad(
+        255 - image, *size, method=tf.image.ResizeMethod.LANCZOS3
+    )
 
 
 @store_transformation
