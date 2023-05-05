@@ -32,6 +32,15 @@ def load(path: Union[Path, str]):
     return model
 
 
+def format_data(X, Y, classes, maxlen=None):
+    maxlen = maxlen or len(max(Y, key=len))
+    tokenize = keras.layers.StringLookup(vocabulary=classes, num_oov_indices=0)
+    Y = tokenize(tf.strings.unicode_split(Y, input_encoding="UTF-8"))
+    Y = Y.to_tensor(default_value=-1, shape=(None, maxlen))
+    X = np.expand_dims(X, -1)
+    return X, Y
+
+
 def to_sparse_filtered(tensor, filtered_value, dtype=tf.int32) -> tf.SparseTensor:
     sparse = tf.cast(tf.sparse.from_dense(tensor), dtype=dtype)
     return tf.sparse.retain(sparse, tf.not_equal(sparse.values, filtered_value))
@@ -57,7 +66,7 @@ def ctc_loss(y_true, y_pred):
     true_size = tf.cast(tf.shape(y_true)[1], dtype=tf.int32)
     pred_size = tf.fill([batch_size, 1], pred_size)
     true_size = tf.fill([batch_size, 1], true_size)
-    
+
     # Make padding non-negative since ctc_batch_cost doesn't like it
     # Non-class tokens will be discarded by the function anyways
     y_true = tf.where(y_true == -1, clss_size, tf.cast(y_true, dtype=tf.int32))
