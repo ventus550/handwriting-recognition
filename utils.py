@@ -32,6 +32,38 @@ def load(path: Union[Path, str]):
     return model
 
 
+def to_sparse_filtered(tensor, filtered_value, dtype=tf.int32) -> tf.SparseTensor:
+    sparse = tf.cast(tf.sparse.from_dense(tensor), dtype=dtype)
+    return tf.sparse.retain(sparse, tf.not_equal(sparse.values, filtered_value))
+
+
+def edit_distance(y_true, y_pred):
+    batch_size = tf.cast(tf.shape(y_pred)[0], dtype=tf.int32)
+    input_size = tf.cast(tf.shape(y_pred)[1], dtype=tf.int32)
+    input_size = tf.fill([batch_size], input_size)
+
+    decode, _ = keras.backend.ctc_decode(y_pred, input_length=input_size, greedy=True)
+    sparse_truths = to_sparse_filtered(y_true, -1)
+    sparse_decode = to_sparse_filtered(decode[0], -1)
+
+    edit_distances = tf.edit_distance(sparse_decode, sparse_truths, normalize=False)
+    return tf.reduce_mean(edit_distances)
+
+
+def ctc_loss(y_true, y_pred):
+    batch_size = tf.cast(tf.shape(y_pred)[0], dtype=tf.int32)
+    pred_size = tf.cast(tf.shape(y_pred)[1], dtype=tf.int32)
+    clss_size = tf.cast(tf.shape(y_pred)[2], dtype=tf.int32)
+    true_size = tf.cast(tf.shape(y_true)[1], dtype=tf.int32)
+    pred_size = tf.fill([batch_size, 1], pred_size)
+    true_size = tf.fill([batch_size, 1], true_size)
+    
+    # Make padding non-negative since ctc_batch_cost doesn't like it
+    # Non-class tokens will be discarded by the function anyways
+    y_true = tf.where(y_true == -1, clss_size, tf.cast(y_true, dtype=tf.int32))
+    return tf.keras.backend.ctc_batch_cost(y_true, y_pred, pred_size, true_size)
+
+
 def best_path_search(timesteps):
     return np.argmax(timesteps, axis=1)
 
