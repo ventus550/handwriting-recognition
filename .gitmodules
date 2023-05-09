@@ -1,3 +1,6 @@
 [submodule "TkCanvas"]
 	path = TkCanvas
 	url = git@github.com:ventus550/TkCanvas.git
+[submodule "SpatialTransformer"]
+	path = SpatialTransformer
+	url = git@github.com:ventus550/SpatialTransformer.git
