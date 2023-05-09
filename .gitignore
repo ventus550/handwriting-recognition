@@ -8,6 +8,9 @@ __pycache__/
 
 # Distribution / packaging
 etl_output
+/notebooks/logs
+/notebooks/*.h5
+/models/new.h5
 .Python
 *.png
 *.jpg
